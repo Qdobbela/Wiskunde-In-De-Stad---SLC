@@ -82,7 +82,18 @@ try {
   }
   check("6 s dwell over ≥ 3 accurate pings → unlocked", p.status === "unlocked", JSON.stringify(p));
 
+  // Level per spot: unlocked, but no question text until a level is chosen.
   s = await call("state", {}, { token });
+  check(
+    "unlocked spot asks for a level, without question text",
+    s.question?.needsLevel === true && s.question.levels.map((l) => l.level).join() === "basis,expert" && !JSON.stringify(s).includes("Hoeveel"),
+    JSON.stringify(s.question),
+  );
+  const none = await call("choose-level", { locationId: spots[0].id, level: "gevorderd" }, { token });
+  check("a level without a question is refused", none.status === 400, none.error);
+  s = await call("choose-level", { locationId: spots[0].id, level: "expert" }, { token });
+  const again2 = await call("choose-level", { locationId: spots[0].id, level: "basis" }, { token });
+  check("the level can't be changed afterwards", again2.status === 409, again2.error);
   const { data: assignment } = await admin.from("assignment").select("param_values, expected_value").eq("location_id", spots[0].id).single();
   const { n, z } = assignment.param_values;
   check("question text filled in with this group's numbers", s.question?.body === `Hoeveel is ${n} keer ${z}?`, s.question?.body);
@@ -118,7 +129,7 @@ try {
     p = await call("ping", { lat: 51.0573 + i * 3e-6, lng: 3.7208, accuracy: 8, ts: Date.now() }, { token });
   }
   check("after the teacher resolves it → unlocked", p.status === "unlocked", JSON.stringify(p));
-  s = await call("state", {}, { token });
+  s = await call("choose-level", { locationId: spots[1].id, level: "expert" }, { token });
   check("photo question", s.question?.needsPhoto === true && s.question.photoPrompt === "Foto van de vlag");
   const noPhoto = await call("answer", null, { token, form: form({ locationId: spots[1].id, value: "geel" }) });
   check("answer without photo refused", noPhoto.status === 400, noPhoto.error);

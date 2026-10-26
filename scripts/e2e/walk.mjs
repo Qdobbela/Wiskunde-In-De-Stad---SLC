@@ -70,6 +70,14 @@ async function standAt(page, position, seconds) {
   }
 }
 
+/** At an unlocked spot: pick the level for this question. */
+async function chooseLevel(page, level, shot) {
+  await page.getByText("Kies jullie niveau").waitFor();
+  await page.getByRole("radio", { name: new RegExp(level, "i") }).click();
+  if (shot) await page.screenshot({ path: `${OUT}/${shot}.png` });
+  await page.getByRole("button", { name: new RegExp(`^Kies ${level}`, "i") }).click();
+}
+
 /** Walk in steps of `step` m every 2 s (walking pace, no GPS jump). */
 async function walk(page, from, to, stepM = 12) {
   const dist = (to.lat - from.lat) * 111_320;
@@ -81,18 +89,21 @@ async function walk(page, from, to, stepM = 12) {
   }
 }
 
-async function join(page, name, members, level) {
-  await page.goto(BASE + "/");
-  await page.getByLabel("Sessiecode van je leerkracht").fill(session.code.toLowerCase());
-  await page.getByRole("button", { name: "Doe mee" }).click();
+/** Joins by typing the code, or through the QR link (`viaQr`). No level yet. */
+async function join(page, name, members, { viaQr = false } = {}) {
+  if (viaQr) {
+    await page.goto(`${BASE}/?sessie=${session.code}`);
+  } else {
+    await page.goto(BASE + "/");
+    await page.getByLabel("Sessiecode van je leerkracht").fill(session.code.toLowerCase());
+    await page.getByRole("button", { name: "Doe mee" }).click();
+  }
   await page.getByLabel("Groepsnaam").fill(name);
   for (const [i, m] of members.entries()) {
     if (i > 0) await page.getByRole("button", { name: "+ Leerling toevoegen" }).click();
     await page.getByLabel(`Voornaam leerling ${i + 1}`).fill(m);
   }
   await page.getByRole("button", { name: "Verder" }).click();
-  await page.getByRole("radio", { name: new RegExp(level, "i") }).click();
-  await page.getByRole("button", { name: new RegExp(`^Kies ${level}`, "i") }).click();
   await page.getByRole("button", { name: "Toestaan en starten" }).click();
   await page.waitForURL(/\/tocht\/$/);
 }
@@ -108,7 +119,7 @@ try {
 
   // Phone A starts 40 m from the Belfort, walks in and stands still.
   const a = await phone(north(-40));
-  await join(a, "De Torenwachters", ["Amira", "Lucas"], "Expert");
+  await join(a, "De Torenwachters", ["Amira", "Lucas"]);
   await a.getByText("Op weg naar").waitFor({ timeout: 15000 });
   check("L06 shown near a spot", true, (await a.locator("main").innerText()).replace(/\n+/g, " | ").slice(0, 160));
   await a.screenshot({ path: `${OUT}/L06.png` });
@@ -117,9 +128,12 @@ try {
   let unlocked = false;
   for (let i = 0; i < 10 && !unlocked; i++) {
     await standAt(a, north(-4), 4);
-    unlocked = (await a.getByText("Jullie staan aan").count()) > 0;
+    unlocked = (await a.getByText("Kies jullie niveau").count()) > 0;
   }
-  check("question unlocked after standing in the zone", unlocked);
+  check("spot unlocked after standing in the zone: choose a level", unlocked);
+  check("no question text before choosing", (await a.getByText("Hoeveel").count()) === 0);
+  await chooseLevel(a, "Expert", "L03-spot");
+  await a.getByText("Jullie staan aan").waitFor();
   const body = await a.locator("main p", { hasText: "Hoeveel is" }).innerText();
   const [, n, z] = body.match(/(\d+) keer (\d+)/) ?? [];
   check("question has this group's numbers", Boolean(n && z), body);
@@ -157,9 +171,12 @@ try {
   unlocked = false;
   for (let i = 0; i < 10 && !unlocked; i++) {
     await standAt(a, north(-2, SPOT2), 4);
-    unlocked = (await a.getByText("Welke kleur").count()) > 0;
+    unlocked = (await a.getByText("Kies jullie niveau").count()) > 0;
   }
   check("spot 2 unlocked", unlocked);
+  check("spot 2 offers only the level it has", (await a.getByRole("radio").count()) === 2, `${await a.getByRole("radio").count()} options`);
+  await chooseLevel(a, "Expert");
+  await a.getByText("Welke kleur").waitFor();
   await a.getByRole("button", { name: "+ Foto met camera" }).click();
   await a.getByRole("button", { name: "Foto nemen" }).waitFor();
   await sleep(1500);
@@ -174,7 +191,8 @@ try {
 
   // Phone B: on the map, then a GPS jump.
   const b = await phone(north(-300));
-  await join(b, "Leiezwemmers", ["Jonas"], "Basis");
+  await join(b, "Leiezwemmers", ["Jonas"], { viaQr: true });
+  check("QR link filled in the code", true);
   await b.getByText("Volgende spot").waitFor({ timeout: 15000 });
   await sleep(3000);
   await b.screenshot({ path: `${OUT}/L05.png` });
@@ -217,7 +235,7 @@ try {
   await t.getByText("Resultaten 2B").waitFor();
   await t.locator("a", { hasText: "De Torenwachters" }).waitFor();
   const results = (await t.locator("a", { hasText: "De Torenwachters" }).innerText()).replace(/\s*\n+\s*/g, " | ");
-  check("T06: De Torenwachters first, 2/2 spots, 1 alert, 100 points", /^1 \| DE TORENWACHTERS \| NIVEAU: EXPERT \| 2\/2 \| [\d:]+ \| 1 \| 100$/i.test(results), results);
+  check("T06: De Torenwachters first, Expert ×2, 2/2 spots, 1 alert, 100 points", /^1 \| DE TORENWACHTERS \| EXPERT \| ×2 \| 2\/2 \| [\d:]+ \| 1 \| 100$/i.test(results), results);
   await t.screenshot({ path: `${OUT}/T06.png` });
 
   await a.goto(`${BASE}/klassement/`);

@@ -81,3 +81,18 @@ a.row:hover {
     break-inside: avoid;
   }
 }
+
+.levels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2xs);
+}
+
+.levelCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-body-s);
+}

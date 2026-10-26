@@ -6,30 +6,25 @@ import { useRouter } from "next/navigation";
 import { StatusBar } from "@/components/student/StatusBar";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { NiveauTag } from "@/components/ui/NiveauTag";
 import { Sticker } from "@/components/ui/Sticker";
-import { LEVELS, NIVEAUS, type Niveau } from "@/lib/niveau";
-import { formatDutchNumber } from "@/lib/number";
 import { requestCamera, requestLocation } from "@/lib/student/useGeolocation";
 import { ApiError, call, setGroupToken } from "@/lib/student/api";
 import common from "@/components/student/student.module.css";
 import styles from "./join.module.css";
 
-type Step = "code" | "groep" | "niveau" | "toestemming";
+type Step = "code" | "groep" | "toestemming";
 
-type Draft = { code: string; tourTitle: string; name: string; members: string[]; level: Niveau | null };
+type Draft = { code: string; tourTitle: string; name: string; members: string[] };
 
-const EMPTY: Draft = { code: "", tourTitle: "", name: "", members: [""], level: null };
+const EMPTY: Draft = { code: "", tourTitle: "", name: "", members: [""] };
 const STORAGE_KEY = "wids-join";
 
-const LEVEL_TEXT: Record<Niveau, string> = {
-  basis: "Rekenen met wat je ziet. Tellen, schatten, eenvoudige formules.",
-  gevorderd: "Schaal, oppervlakte en procenten. Meerdere stappen.",
-  expert: "Pythagoras, hoeken en verbanden. Voor wie wil zweten.",
-};
-
-/** L01 to L04: code, group, level, permissions. The group is created at the end. */
-export function JoinFlow() {
+/**
+ * L01, L02 and L04: code, group, permissions. The group is created at the end.
+ * The level (L03) is chosen at every spot instead. `initialCode` comes from
+ * the QR code on the teacher's screen and is checked straight away.
+ */
+export function JoinFlow({ initialCode }: { initialCode?: string }) {
   const router = useRouter();
   const [step, setStep] = useState<Step>("code");
   const [draft, setDraft] = useState<Draft>(EMPTY);
@@ -38,17 +33,25 @@ export function JoinFlow() {
   const lastMemberRef = useRef<HTMLInputElement>(null);
   const [focusLast, setFocusLast] = useState(false);
 
-  // Keep the draft when the page reloads (per tab, never shared).
+  // Keep the draft when the page reloads (per tab, never shared). A code from
+  // a QR link wins over a saved draft.
   useEffect(() => {
+    if (initialCode) {
+      checkCode(initialCode);
+      return;
+    }
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved) as { step: Step; draft: Draft };
-        setDraft(parsed.draft);
-        setStep(parsed.step);
+        if (parsed.step !== ("niveau" as Step)) {
+          setDraft({ ...EMPTY, ...parsed.draft });
+          setStep(parsed.step);
+        }
       }
     } catch {}
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialCode]);
   useEffect(() => {
     try {
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ step, draft }));
@@ -70,17 +73,22 @@ export function JoinFlow() {
 
   const update = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
-  function submitCode(e: React.FormEvent) {
-    e.preventDefault();
+  function checkCode(code: string) {
+    update({ code: code.toUpperCase() });
     startTransition(async () => {
       try {
-        const result = await call<{ code: string; tourTitle: string }>("check-code", { code: draft.code });
+        const result = await call<{ code: string; tourTitle: string }>("check-code", { code });
         update({ code: result.code, tourTitle: result.tourTitle });
         go("groep");
       } catch (err) {
         setError(err instanceof ApiError ? err.message : "Er ging iets mis.");
       }
     });
+  }
+
+  function submitCode(e: React.FormEvent) {
+    e.preventDefault();
+    checkCode(draft.code);
   }
 
   function submitGroup(e: React.FormEvent) {
@@ -90,12 +98,10 @@ export function JoinFlow() {
     if (members.length === 0) return setError("Voeg minstens één leerling toe.");
     if (members.some((m) => /\s/.test(m))) return setError("Alleen voornamen, zonder achternaam.");
     update({ members });
-    go("niveau");
+    go("toestemming");
   }
 
   function start() {
-    if (!draft.level) return;
-    const level = draft.level;
     setError(null);
     startTransition(async () => {
       const location = await requestLocation();
@@ -110,14 +116,12 @@ export function JoinFlow() {
       // The camera is only needed for photo questions; L08 asks again if needed.
       await requestCamera();
       try {
-        // The group only exists from here on, so its level is fixed from the start.
         const { token } = await call<{ token: string }>("join", {
           code: draft.code,
           name: draft.name,
           members: draft.members,
-          level,
         });
-        setGroupToken(token);
+        setGroupToken(token, draft.code);
         try {
           sessionStorage.removeItem(STORAGE_KEY);
         } catch {}
@@ -173,8 +177,9 @@ export function JoinFlow() {
         <button type="button" className={common.back} onClick={() => go("code")}>
           ← Andere code
         </button>
-        <p className={common.step}>Stap 1 van 3</p>
+        <p className={common.step}>Stap 1 van 2</p>
         <h1 className={common.title}>Jullie groep</h1>
+        {draft.tourTitle && <p className={common.body}>Tocht: {draft.tourTitle}</p>}
         <Input
           label="Groepsnaam"
           mono
@@ -233,55 +238,13 @@ export function JoinFlow() {
     );
   }
 
-  if (step === "niveau") {
-    return (
-      <div className={common.screen}>
-        <StatusBar status="idle" />
-        <button type="button" className={common.back} onClick={() => go("groep")}>
-          ← Terug
-        </button>
-        <p className={common.step}>Stap 2 van 3</p>
-        <h1 className={common.title}>Kies jullie niveau</h1>
-        <div role="radiogroup" aria-label="Niveau" className={styles.levels}>
-          {LEVELS.map((level) => {
-            const chosen = draft.level === level;
-            return (
-              <button
-                key={level}
-                type="button"
-                role="radio"
-                aria-checked={chosen}
-                className={[styles.level, chosen && styles.levelChosen].filter(Boolean).join(" ")}
-                onClick={() => update({ level })}
-              >
-                <span className={styles.levelHead}>
-                  <NiveauTag niveau={level} />
-                  <span className={styles.multiplier}>
-                    x{formatDutchNumber(NIVEAUS[level].multiplier)} punten
-                  </span>
-                </span>
-                <span className={common.body}>{LEVEL_TEXT[level]}</span>
-                {chosen && <span className={styles.chosen}>Gekozen</span>}
-              </button>
-            );
-          })}
-        </div>
-        <p className={styles.note}>Let op: je kan je niveau niet meer wijzigen tijdens de tocht.</p>
-        <div className={common.spacer} />
-        <Button disabled={!draft.level} onClick={() => go("toestemming")}>
-          {draft.level ? `Kies ${NIVEAUS[draft.level].label}` : "Kies een niveau"}
-        </Button>
-      </div>
-    );
-  }
-
   return (
     <div className={common.screen}>
       <StatusBar status="idle" />
-      <button type="button" className={common.back} onClick={() => go("niveau")} disabled={pending}>
+      <button type="button" className={common.back} onClick={() => go("groep")} disabled={pending}>
         ← Terug
       </button>
-      <p className={common.step}>Stap 3 van 3</p>
+      <p className={common.step}>Stap 2 van 2</p>
       <h1 className={common.title}>Twee dingen nodig</h1>
       <section className={common.card}>
         <h2 className={styles.permission}>

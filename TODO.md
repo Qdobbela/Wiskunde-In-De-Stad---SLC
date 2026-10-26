@@ -21,7 +21,8 @@ Overview of what's done and what's left. Follows the build order in [docs/build-
 
 ## 3. Student: join and walk ✅
 
-- [x] L01–L04 join flow; the group is created at L04, so the level is fixed from the start
+- [x] L01, L02, L04 join flow (code, group, permissions); QR code on the session page fills in the code (`/?sessie=CODE`)
+- [x] Level per spot: after a spot unlocks the group picks Basis/Gevorderd/Expert (L03), then gets the question; the choice is final
 - [x] L05 Kaart: own position, dotted route, next spot, distance, progress, timer
 - [x] Groups start at different spots; pings every ~4 s, also while standing still
 

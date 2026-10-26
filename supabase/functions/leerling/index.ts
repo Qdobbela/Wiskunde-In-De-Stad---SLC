@@ -55,6 +55,8 @@ Deno.serve(async (req) => {
         return json(await join(await req.json(), deviceOf(req)));
       case "state":
         return json(await state(await groupOf(req)));
+      case "choose-level":
+        return json(await chooseLevel(await groupOf(req), await req.json()));
       case "ping":
         return json(await ping(await groupOf(req), await req.json()));
       case "answer":
@@ -86,7 +88,6 @@ function deviceOf(req: Request): string {
 type Group = {
   id: string;
   name: string;
-  level: Niveau;
   start_index: number;
   started_at: string | null;
   member_first_names: string[];
@@ -99,7 +100,7 @@ async function groupOf(req: Request): Promise<Group> {
   const device = deviceOf(req);
   const { data } = await db
     .from("team")
-    .select("id, name, level, start_index, started_at, member_first_names, device_id, session:session_id(id, status, ends_at, tour_id)")
+    .select("id, name, start_index, started_at, member_first_names, device_id, session:session_id(id, status, ends_at, tour_id)")
     .eq("device_token", token)
     .maybeSingle();
   if (!data) throw new Refusal("Geen groep", 401);
@@ -158,12 +159,10 @@ async function checkCode(body: { code?: string }) {
 async function join(body: Record<string, unknown>, device: string) {
   const name = String(body.name ?? "").trim().replace(/\s+/g, " ");
   const members = (Array.isArray(body.members) ? body.members : []).map((m) => String(m).trim()).filter(Boolean);
-  const level = String(body.level ?? "") as Niveau;
   if (name.length < 2 || name.length > 40) throw new Refusal("Kies een groepsnaam van 2 tot 40 tekens.");
   if (members.length === 0) throw new Refusal("Voeg minstens één leerling toe.");
   if (members.length > 8) throw new Refusal("Een groep heeft hoogstens 8 leerlingen.");
   if (members.some((m) => m.length > 20 || /\s/.test(m))) throw new Refusal("Gebruik alleen voornamen (zonder spaties).");
-  if (!LEVELS.includes(level)) throw new Refusal("Kies een niveau.");
 
   const session = await liveSession(String(body.code ?? ""));
 
@@ -188,8 +187,9 @@ async function join(body: Record<string, unknown>, device: string) {
     .insert({
       session_id: session.id,
       name,
-      level,
       member_first_names: members,
+      // The level is chosen per spot (choose-level), not here.
+      level: null,
       start_index: count ?? 0,
       started_at: new Date().toISOString(),
       device_id: device,
@@ -241,22 +241,38 @@ async function openQuestion(group: Group, route: Awaited<ReturnType<typeof route
   if (!open) return null;
   const { data: a } = await db
     .from("assignment")
-    .select("param_values, question:question_id(id, body, answer_type, unit, needs_photo, photo_prompt, base_points)")
+    .select("param_values, question:question_id(id, level, body, answer_type, unit, needs_photo, photo_prompt, base_points)")
     .eq("team_id", group.id)
     .eq("location_id", open.id)
-    .single();
+    .maybeSingle();
+
+  // Unlocked, but no level chosen yet: offer the levels this spot has.
+  if (!a) {
+    const { data: questions } = await db
+      .from("question")
+      .select("level, base_points, needs_photo, answer_type")
+      .eq("location_id", open.id);
+    const levels = LEVELS.filter((level) => (questions ?? []).some((q) => q.level === level)).map((level) => {
+      const q = (questions ?? []).find((x) => x.level === level)!;
+      return { level, maxPoints: pointsFor(q.base_points, level, 1), needsPhoto: q.needs_photo || q.answer_type === "photo" };
+    });
+    return { needsLevel: true as const, locationId: open.id, spotName: open.name, number: open.number, levels };
+  }
+
   const q = (a as any).question;
   return {
+    needsLevel: false as const,
     locationId: open.id,
     spotName: open.name,
     number: open.number,
+    level: q.level as Niveau,
     // Rule 2: the text is filled in and sent only now, after the unlock.
     body: renderBody(q.body, (a as any).param_values ?? {}),
     answerType: q.answer_type,
     unit: q.unit,
     needsPhoto: q.needs_photo || q.answer_type === "photo",
     photoPrompt: q.photo_prompt,
-    maxPoints: pointsFor(q.base_points, group.level, 1),
+    maxPoints: pointsFor(q.base_points, q.level, 1),
     deadline: unlocked.get(open.id)?.deadline_at ?? null,
   };
 }
@@ -281,7 +297,7 @@ async function state(group: Group) {
     blocked(group.id),
   ]);
   return {
-    team: { name: group.name, level: group.level },
+    team: { name: group.name },
     session: { endsAt: group.session.ends_at, timeUp: timeUp(group) },
     route: route.map((s) => ({
       id: s.id,
@@ -299,38 +315,58 @@ async function state(group: Group) {
   };
 }
 
+/** Rule 1: the server opens the spot. The question follows when the group picks a level. */
 async function unlockSpot(group: Group, spot: Spot) {
-  // The group's level; fall back to another level rather than block the group.
-  const { data: questions } = await db
-    .from("question")
-    .select("id, level, params, correct_value, answer_type, time_limit_s")
-    .eq("location_id", spot.id);
-  const ofLevel = (questions ?? []).filter((q) => q.level === group.level);
-  const pool = ofLevel.length > 0 ? ofLevel : questions ?? [];
-  if (pool.length === 0) return false;
+  const { count } = await db.from("question").select("id", { count: "exact", head: true }).eq("location_id", spot.id);
+  if (!count) return false;
+  const { error } = await db.from("unlock").insert({ team_id: group.id, location_id: spot.id });
+  if (error && error.code !== "23505") throw error;
+  return true;
+}
+
+/**
+ * The group picks Basis, Gevorderd or Expert for this spot. Final: once a
+ * question is assigned, the level can't change (no peeking at another level).
+ */
+async function chooseLevel(group: Group, body: Record<string, unknown>) {
+  if (timeUp(group)) throw new Refusal("De tijd is om.");
+  const locationId = String(body.locationId ?? "");
+  const level = String(body.level ?? "") as Niveau;
+  if (!LEVELS.includes(level)) throw new Refusal("Kies een niveau.");
+
+  const [{ data: unlock }, { data: existing }, { data: questions }] = await Promise.all([
+    db.from("unlock").select("location_id").eq("team_id", group.id).eq("location_id", locationId).maybeSingle(),
+    db.from("assignment").select("question_id").eq("team_id", group.id).eq("location_id", locationId).maybeSingle(),
+    db.from("question").select("id, level, params, correct_value, answer_type, time_limit_s").eq("location_id", locationId).eq("level", level),
+  ]);
+  if (!unlock) throw new Refusal("Deze spot is nog niet ontgrendeld.");
+  if (existing) throw new Refusal("Jullie kozen al een niveau voor deze spot.", 409);
+  if (!questions?.length) throw new Refusal("Er is geen vraag op dit niveau. Kies een ander niveau.");
 
   // Rule 4: each group its own variant and numbers.
-  const q = pool[Math.floor(Math.random() * pool.length)];
+  const q = questions[Math.floor(Math.random() * questions.length)];
   const values = pickValues((q.params ?? {}) as Params);
   const expected = q.answer_type === "number" && q.correct_value ? evaluate(q.correct_value, values) : null;
-
   const { error } = await db.from("assignment").insert({
     team_id: group.id,
-    location_id: spot.id,
+    location_id: locationId,
     question_id: q.id,
     param_values: values,
     expected_value: expected,
   });
-  if (error && error.code !== "23505") throw error;
-  const now = Date.now();
-  const { error: unlockError } = await db.from("unlock").insert({
-    team_id: group.id,
-    location_id: spot.id,
-    unlocked_at: new Date(now).toISOString(),
-    deadline_at: q.time_limit_s ? new Date(now + q.time_limit_s * 1000).toISOString() : null,
-  });
-  if (unlockError && unlockError.code !== "23505") throw unlockError;
-  return true;
+  if (error) {
+    if (error.code === "23505") throw new Refusal("Jullie kozen al een niveau voor deze spot.", 409);
+    throw error;
+  }
+  // The question timer starts now, when the group sees the question.
+  if (q.time_limit_s) {
+    await db
+      .from("unlock")
+      .update({ deadline_at: new Date(Date.now() + q.time_limit_s * 1000).toISOString() })
+      .eq("team_id", group.id)
+      .eq("location_id", locationId);
+  }
+  return state(group);
 }
 
 async function ping(group: Group, body: Record<string, unknown>) {
@@ -409,7 +445,7 @@ async function answer(group: Group, form: FormData) {
     db.from("unlock").select("unlocked_at, deadline_at").eq("team_id", group.id).eq("location_id", locationId).maybeSingle(),
     db
       .from("assignment")
-      .select("expected_value, question:question_id(id, answer_type, correct_value, tolerance, needs_photo, base_points, unit)")
+      .select("expected_value, question:question_id(id, level, answer_type, correct_value, tolerance, needs_photo, base_points, unit)")
       .eq("team_id", group.id)
       .eq("location_id", locationId)
       .maybeSingle(),
@@ -482,8 +518,9 @@ async function answer(group: Group, form: FormData) {
   return {
     correct: pending ? null : autoCorrect,
     pending,
-    points: pending ? null : pointsFor(q.base_points, group.level, autoCorrect ? 1 : 0),
-    maxPoints: pointsFor(q.base_points, group.level, 1),
+    level: q.level,
+    points: pending ? null : pointsFor(q.base_points, q.level, autoCorrect ? 1 : 0),
+    maxPoints: pointsFor(q.base_points, q.level, 1),
     value,
     unit: q.unit,
     lockedAt: saved.submitted_at,

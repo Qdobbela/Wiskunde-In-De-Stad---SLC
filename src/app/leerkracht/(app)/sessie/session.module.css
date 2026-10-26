@@ -1,6 +1,6 @@
 .grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   gap: var(--spacing-xl);
   align-items: start;
 }
@@ -72,4 +72,18 @@
   font-size: var(--text-body-s);
   color: var(--color-text-secondary);
   white-space: nowrap;
+}
+
+.joinRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--spacing-xl);
+}
+
+.joinCode,
+.joinQr {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }

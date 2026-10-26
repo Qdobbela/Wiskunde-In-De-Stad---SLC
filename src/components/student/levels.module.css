@@ -1,0 +1,48 @@
+/* L03 level options (now chosen at every spot) */
+.levels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.level {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  text-align: left;
+  cursor: pointer;
+}
+
+.levelChosen {
+  background: var(--color-status-pending);
+  box-shadow: var(--shadow-hard);
+}
+
+.levelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.multiplier {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+}
+
+.chosen {
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.note {
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}
+

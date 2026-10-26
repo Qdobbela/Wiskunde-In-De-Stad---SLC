@@ -20,6 +20,7 @@ import { useGeolocation } from "@/lib/student/useGeolocation";
 import common from "@/components/student/student.module.css";
 import { BijnaView, type ZoneInfo } from "./BijnaView";
 import { KaartView } from "./KaartView";
+import { NiveauView } from "./NiveauView";
 import { ResultView } from "./ResultView";
 import { VraagView } from "./VraagView";
 import styles from "./tocht.module.css";
@@ -175,7 +176,7 @@ export function Walk() {
       <ResultView
         result={result.answer}
         spotName={result.question.spotName}
-        level={state.team.level}
+        level={result.answer.level}
         done={doneCount}
         total={route.length}
         nextNumber={upcoming?.number ?? null}
@@ -186,12 +187,25 @@ export function Walk() {
         }}
       />
     );
+  } else if (question?.needsLevel) {
+    screen = (
+      <NiveauView
+        key={question.locationId}
+        choice={question}
+        current={doneCount + 1}
+        total={route.length}
+        sessionEndsAt={state.session.endsAt}
+        fix={fix}
+        geoStatus={geoStatus}
+        onChosen={setState}
+      />
+    );
   } else if (question) {
     screen = (
       <VraagView
         key={question.locationId}
         question={question}
-        level={state.team.level}
+        level={question.level}
         current={doneCount + 1}
         total={route.length}
         sessionEndsAt={state.session.endsAt}
@@ -225,7 +239,6 @@ export function Walk() {
       <KaartView
         route={route}
         next={next}
-        level={state.team.level}
         endsAt={state.session.timeUp ? null : state.session.endsAt}
         fix={fix}
         geoStatus={geoStatus}

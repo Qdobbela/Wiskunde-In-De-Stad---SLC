@@ -5,13 +5,20 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { NiveauTag } from "@/components/ui/NiveauTag";
-import { NIVEAUS } from "@/lib/niveau";
+import { LEVELS, NIVEAUS, type Niveau } from "@/lib/niveau";
 import { hoursMinutes, longDate, shortDate } from "@/lib/teacher/format";
 import { listSessions } from "@/lib/teacher/queries";
 import { answerScore, loadSession, type SessionData } from "@/lib/teacher/sessionData";
 import { useLoad } from "@/lib/useLoad";
 import layout from "../teacher.module.css";
 import styles from "./resultaten.module.css";
+
+/** Which levels a group chose at its spots, e.g. [{ expert, 2 }, { basis, 1 }]. */
+function levelsOf(team: SessionData["teams"][number]) {
+  const counts = new Map<Niveau, number>();
+  for (const a of team.answers) counts.set(a.question.level, (counts.get(a.question.level) ?? 0) + 1);
+  return LEVELS.filter((l) => counts.has(l)).map((level) => ({ level, count: counts.get(level)! }));
+}
 
 function rankingOf(data: SessionData) {
   return [...data.teams]
@@ -41,7 +48,7 @@ function hardestSpot(data: SessionData) {
 
 function downloadCsv(data: SessionData) {
   const rows = rankingOf(data);
-  const header = ["Plek", "Groep", "Leerlingen", "Niveau", "Spots", "Tijd", "Meldingen", "Punten"];
+  const header = ["Plek", "Groep", "Leerlingen", "Niveaus", "Spots", "Tijd", "Meldingen", "Punten"];
   const cell = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
   const lines = [
     header.map(cell).join(";"),
@@ -50,7 +57,7 @@ function downloadCsv(data: SessionData) {
         i + 1,
         r.team.name,
         r.team.members.join(", "),
-        NIVEAUS[r.team.level].label,
+        levelsOf(r.team).map((l) => `${l.count}× ${NIVEAUS[l.level].label}`).join(", "),
         `${r.team.done}/${data.spots.length}`,
         r.seconds === null ? "" : hoursMinutes(r.seconds),
         r.flags,
@@ -119,7 +126,7 @@ function Results({ sessionId }: { sessionId: string }) {
         <div className={`${styles.row} ${styles.head}`}>
           <span>Plek</span>
           <span>Groep</span>
-          <span>Niveau</span>
+          <span>Niveaus</span>
           <span>Spots</span>
           <span>Tijd</span>
           <span>Meldingen</span>
@@ -130,8 +137,13 @@ function Results({ sessionId }: { sessionId: string }) {
           <Link key={r.team.id} href={`/leerkracht/groep/?id=${r.team.id}`} className={[styles.row, i === 0 && styles.first].filter(Boolean).join(" ")}>
             <span className={styles.num}>{i + 1}</span>
             <span className={styles.name}>{r.team.name}</span>
-            <span>
-              <NiveauTag niveau={r.team.level} />
+            <span className={styles.levels}>
+              {levelsOf(r.team).map((l) => (
+                <span key={l.level} className={styles.levelCount}>
+                  <NiveauTag niveau={l.level} short />
+                  {l.count > 1 && <span>×{l.count}</span>}
+                </span>
+              ))}
             </span>
             <span className={styles.num}>
               {r.team.done}/{data.spots.length}
@@ -142,7 +154,7 @@ function Results({ sessionId }: { sessionId: string }) {
           </Link>
         ))}
         <p className={styles.note}>
-          Punten op Gevorderd tellen x1,5 en op Expert x2.
+          Groepen kiezen bij elke spot een niveau. Punten op Gevorderd tellen x1,5 en op Expert x2.
           {pending > 0 && ` ${pending === 1 ? "Eén foto is" : `${pending} foto’s zijn`} nog niet nagekeken.`}
         </p>
       </section>

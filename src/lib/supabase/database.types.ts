@@ -441,7 +441,7 @@ export type Database = {
           device_id: string | null
           device_token: string
           id: string
-          level: Database["public"]["Enums"]["niveau"]
+          level: Database["public"]["Enums"]["niveau"] | null
           member_first_names: string[]
           name: string
           session_id: string
@@ -453,7 +453,7 @@ export type Database = {
           device_id?: string | null
           device_token?: string
           id?: string
-          level: Database["public"]["Enums"]["niveau"]
+          level?: Database["public"]["Enums"]["niveau"] | null
           member_first_names: string[]
           name: string
           session_id: string
@@ -465,7 +465,7 @@ export type Database = {
           device_id?: string | null
           device_token?: string
           id?: string
-          level?: Database["public"]["Enums"]["niveau"]
+          level?: Database["public"]["Enums"]["niveau"] | null
           member_first_names?: string[]
           name?: string
           session_id?: string

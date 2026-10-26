@@ -9,6 +9,7 @@ import { SUPABASE_KEY, SUPABASE_URL } from "@/lib/supabase/client";
  */
 
 const TOKEN_KEY = "wids-groep";
+const CODE_KEY = "wids-groep-code";
 const DEVICE_KEY = "wids-toestel";
 
 function read(key: string) {
@@ -23,10 +24,20 @@ export function groupToken() {
   return read(TOKEN_KEY);
 }
 
-export function setGroupToken(token: string | null) {
+/** The session code of the stored group, to tell a new session apart. */
+export function groupCode() {
+  return read(CODE_KEY);
+}
+
+export function setGroupToken(token: string | null, code?: string) {
   try {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    else localStorage.removeItem(TOKEN_KEY);
+    if (token) {
+      localStorage.setItem(TOKEN_KEY, token);
+      if (code) localStorage.setItem(CODE_KEY, code);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(CODE_KEY);
+    }
   } catch {}
 }
 
@@ -84,7 +95,20 @@ export type RouteSpot = {
   done: boolean;
 };
 
+export type Level = "basis" | "gevorderd" | "expert";
+
+/** Unlocked, but the group still picks a level for this spot. */
+export type LevelChoice = {
+  needsLevel: true;
+  locationId: string;
+  spotName: string;
+  number: number;
+  levels: { level: Level; maxPoints: number; needsPhoto: boolean }[];
+};
+
 export type OpenQuestion = {
+  needsLevel: false;
+  level: Level;
   locationId: string;
   spotName: string;
   number: number;
@@ -98,10 +122,10 @@ export type OpenQuestion = {
 };
 
 export type GroupState = {
-  team: { name: string; level: "basis" | "gevorderd" | "expert" };
+  team: { name: string };
   session: { endsAt: string | null; timeUp: boolean };
   route: RouteSpot[];
-  question: OpenQuestion | null;
+  question: OpenQuestion | LevelChoice | null;
   message: { id: string; body: string; created_at: string } | null;
   blocked: boolean;
 };
@@ -120,6 +144,7 @@ export type PingResult =
     };
 
 export type AnswerResult = {
+  level: Level;
   correct: boolean | null;
   pending: boolean;
   points: number | null;

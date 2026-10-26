@@ -2,8 +2,8 @@
 
 import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import { JoinQr } from "@/components/teacher/JoinQr";
 import { ButtonLink } from "@/components/ui/Button";
-import { NiveauTag } from "@/components/ui/NiveauTag";
 import { BASE_PATH } from "@/lib/basePath";
 import { supabase } from "@/lib/supabase/client";
 import { clock } from "@/lib/teacher/format";
@@ -21,7 +21,7 @@ function Session() {
       must(
         await supabase()
           .from("session")
-          .select("id, code, status, class_label, ends_at, tour(title, location(id)), team(id, name, level, member_first_names, start_index, created_at)")
+          .select("id, code, status, class_label, ends_at, tour(title, location(id)), team(id, name, member_first_names, start_index, created_at)")
           .eq("id", id)
           .single(),
       ),
@@ -55,12 +55,20 @@ function Session() {
 
       <div className={styles.grid}>
         <section className={`${layout.panel} ${styles.codePanel}`}>
-          <span className={layout.sectionLabel}>Sessiecode</span>
-          <p className={styles.code} aria-label={`Code ${session.code.split("").join(" ")}`}>
-            {session.code}
-          </p>
+          <div className={styles.joinRow}>
+            <div className={styles.joinCode}>
+              <span className={layout.sectionLabel}>Sessiecode</span>
+              <p className={styles.code} aria-label={`Code ${session.code.split("").join(" ")}`}>
+                {session.code}
+              </p>
+            </div>
+            <div className={styles.joinQr}>
+              <span className={layout.sectionLabel}>Of scan</span>
+              <JoinQr code={session.code} />
+            </div>
+          </div>
           <p className={styles.instructions}>
-            Laat elke groep op één gsm naar <strong>{url}</strong> surfen en deze code invullen.
+            Elke groep scant de QR-code met één gsm, of surft naar <strong>{url}</strong> en vult de code in.
           </p>
         </section>
 
@@ -77,7 +85,6 @@ function Session() {
                     <span className={styles.members}>{team.member_first_names.join(", ")}</span>
                   </span>
                   {spotCount > 0 && <span className={styles.start}>start bij spot {(team.start_index % spotCount) + 1}</span>}
-                  <NiveauTag niveau={team.level} />
                 </li>
               ))}
             </ul>

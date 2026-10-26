@@ -8,7 +8,6 @@ import { MapView, type MapPin } from "@/components/map/MapView";
 import { Timer } from "@/components/student/Timer";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { StatusChip, type ChipStatus } from "@/components/ui/StatusChip";
-import { NIVEAUS } from "@/lib/niveau";
 import { clock, shortDate } from "@/lib/teacher/format";
 import { closeSession, resolveFlag, sendMessage } from "@/lib/teacher/mutations";
 import { isRunning, listSessions } from "@/lib/teacher/queries";
@@ -219,7 +218,7 @@ function Live({ sessionId }: { sessionId: string }) {
                   <span className={styles.rowText}>
                     <span className={styles.rowName}>{t.name}</span>
                     <span className={styles.rowMeta}>
-                      {t.members.length} lln · {NIVEAUS[t.level].label} · {t.done}/{spots.length}
+                      {t.members.length} lln · {t.done}/{spots.length} spots
                     </span>
                   </span>
                   <StatusChip status={s.status} label={s.label} />

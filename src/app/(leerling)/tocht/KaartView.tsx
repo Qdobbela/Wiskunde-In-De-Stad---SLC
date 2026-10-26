@@ -7,10 +7,8 @@ import { StatusBar } from "@/components/student/StatusBar";
 import { Timer } from "@/components/student/Timer";
 import { Voortgang } from "@/components/student/Voortgang";
 import { ButtonLink } from "@/components/ui/Button";
-import { NiveauTag } from "@/components/ui/NiveauTag";
 import { StatusChip } from "@/components/ui/StatusChip";
 import { distanceM, formatDistance, walkMinutes } from "@/lib/geo";
-import type { Niveau } from "@/lib/niveau";
 import type { RouteSpot } from "@/lib/student/api";
 import type { GeoFix, GeoStatus } from "@/lib/student/useGeolocation";
 import common from "@/components/student/student.module.css";
@@ -19,7 +17,6 @@ import styles from "./tocht.module.css";
 type KaartViewProps = {
   route: RouteSpot[];
   next: RouteSpot | null;
-  level: Niveau;
   endsAt: string | null;
   fix: GeoFix | null;
   geoStatus: GeoStatus;
@@ -27,7 +24,7 @@ type KaartViewProps = {
 };
 
 /** L05 Kaart: map, route, next spot and progress. */
-export function KaartView({ route, next, level, endsAt, fix, geoStatus, onOpenNext }: KaartViewProps) {
+export function KaartView({ route, next, endsAt, fix, geoStatus, onOpenNext }: KaartViewProps) {
   const doneCount = route.filter((s) => s.done).length;
 
   const pins: MapPin[] = useMemo(
@@ -58,7 +55,7 @@ export function KaartView({ route, next, level, endsAt, fix, geoStatus, onOpenNe
     <main className={`${common.screen} ${styles.screen}`}>
       <StatusBar status={geoStatus} fix={fix} />
       <div className={styles.topBar}>
-        {next ? <SpotBadge current={doneCount + 1} total={route.length} /> : <NiveauTag niveau={level} />}
+        {next ? <SpotBadge current={doneCount + 1} total={route.length} /> : <span />}
         {endsAt && <Timer endsAt={endsAt} />}
       </div>
 

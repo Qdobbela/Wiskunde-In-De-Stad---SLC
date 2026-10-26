@@ -27,6 +27,7 @@ export type AnswerRow = {
   teacher_score: number | null;
   question: {
     id: string;
+    level: Niveau;
     location_id: string;
     body: string;
     answer_type: "number" | "text" | "photo";
@@ -44,7 +45,6 @@ export type TeamOverview = {
   /** "G1", "G2"… in join order. */
   label: string;
   name: string;
-  level: Niveau;
   members: string[];
   startedAt: string | null;
   deviceBound: boolean;
@@ -80,7 +80,7 @@ export async function loadSession(sessionId: string) {
   const teams = must(
     await db
       .from("team")
-      .select("id, name, level, member_first_names, start_index, started_at, device_id, created_at")
+      .select("id, name, member_first_names, start_index, started_at, device_id, created_at")
       .eq("session_id", sessionId)
       .order("start_index"),
   );
@@ -91,7 +91,7 @@ export async function loadSession(sessionId: string) {
         db.from("unlock").select("team_id, location_id, unlocked_at").in("team_id", ids).then(must),
         db
           .from("answer")
-          .select("id, team_id, value, photo_path, photo_taken_at, photo_lat, photo_lng, submitted_at, auto_correct, teacher_score, question:question_id(id, location_id, body, answer_type, unit, needs_photo, photo_prompt, base_points)")
+          .select("id, team_id, value, photo_path, photo_taken_at, photo_lat, photo_lng, submitted_at, auto_correct, teacher_score, question:question_id(id, level, location_id, body, answer_type, unit, needs_photo, photo_prompt, base_points)")
           .in("team_id", ids)
           .then(must),
         db.from("flag").select("id, team_id, type, detail, ts, resolved_at").in("team_id", ids).order("ts", { ascending: false }).then(must),
@@ -114,7 +114,6 @@ export async function loadSession(sessionId: string) {
       id: t.id,
       label: `G${i + 1}`,
       name: t.name,
-      level: t.level,
       members: t.member_first_names,
       startedAt: t.started_at,
       deviceBound: t.device_id !== null,

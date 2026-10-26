@@ -92,6 +92,8 @@ try {
   await page.waitForURL(/\/leerkracht\/sessie\/\?id=/);
   const code = await page.locator("p[aria-label^='Code']").innerText();
   step("session code: " + code + " valid=" + /^[A-HJ-NP-Z2-9]{6}$/.test(code));
+  await page.locator("[aria-label^='QR-code'] svg").waitFor();
+  step("QR code drawn for " + (await page.locator("[aria-label^='QR-code']").getAttribute("aria-label")));
   await page.screenshot({ path: `${OUT}/05-sessie.png` });
 
   for (const [path, heading] of [

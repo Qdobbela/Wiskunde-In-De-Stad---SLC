@@ -78,7 +78,7 @@ function Group({ teamId }: { teamId: string }) {
   if (!data || !me) return <p className={layout.loading}>Laden…</p>;
 
   const spotOf = (locationId: string) => data.spots.find((s) => s.id === locationId);
-  const max = (a: AnswerRow) => pointsFor(a.question.base_points, me.level, 1);
+  const max = (a: AnswerRow) => pointsFor(a.question.base_points, a.question.level, 1);
 
   const log = [
     ...me.unlocks.map((u) => {
@@ -109,7 +109,7 @@ function Group({ teamId }: { teamId: string }) {
       <header className={layout.header}>
         <div className={layout.titleBlock}>
           <span className={layout.eyebrow}>
-            {me.label} · {NIVEAUS[me.level].label} · {me.members.join(", ")}
+            {me.label} · {me.members.join(", ")}
           </span>
           <h1 className={layout.title}>{me.name}</h1>
         </div>
@@ -161,11 +161,14 @@ function Group({ teamId }: { teamId: string }) {
                   onClick={() => a && setSelectedId(a.id)}
                 >
                   <Kaartpin size="s" label={i + 1} status={a ? "opgelost" : open ? "hier" : "vergrendeld"} />
-                  <span className={styles.answerSpot}>{spot.name}</span>
+                  <span className={styles.answerSpot}>
+                    {spot.name}
+                    {a && <span className={styles.answerLevel}>{NIVEAUS[a.question.level].label}</span>}
+                  </span>
                   <span className={styles.answerValue}>{a ? answerText(a) : ""}</span>
                   <span className={styles.answerChip}>{chip && <StatusChip status={chip.status} label={chip.label} />}</span>
                   <span className={styles.answerPoints}>
-                    {a ? (score === null ? "?" : pointsFor(a.question.base_points, me.level, score)) : ""}
+                    {a ? (score === null ? "?" : pointsFor(a.question.base_points, a.question.level, score)) : ""}
                   </span>
                 </button>
               );
@@ -222,7 +225,7 @@ function Group({ teamId }: { teamId: string }) {
                   Fout 0
                 </Button>
                 <Button variant="secondary" onClick={() => review(0.5)}>
-                  Half {pointsFor(selected.question.base_points, me.level, 0.5)}
+                  Half {pointsFor(selected.question.base_points, selected.question.level, 0.5)}
                 </Button>
                 <Button onClick={() => review(1)}>Juist {max(selected)}</Button>
               </div>

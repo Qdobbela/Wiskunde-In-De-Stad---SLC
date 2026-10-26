@@ -3,17 +3,19 @@ import styles from "./NiveauTag.module.css";
 
 type NiveauTagProps = {
   niveau: Niveau;
+  /** Just "Basis" instead of "Niveau: Basis", for tight tables. */
+  short?: boolean;
   className?: string;
 };
 
-export function NiveauTag({ niveau, className }: NiveauTagProps) {
+export function NiveauTag({ niveau, short = false, className }: NiveauTagProps) {
   return (
     <span
       className={[styles.tag, styles[niveau], className]
         .filter(Boolean)
         .join(" ")}
     >
-      Niveau: {NIVEAUS[niveau].label}
+      {short ? NIVEAUS[niveau].label : `Niveau: ${NIVEAUS[niveau].label}`}
     </span>
   );
 }

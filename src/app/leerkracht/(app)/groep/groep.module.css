@@ -195,3 +195,12 @@
   font-size: var(--text-body-m);
   white-space: nowrap;
 }
+
+.answerLevel {
+  display: block;
+  font-weight: 500;
+  font-size: var(--text-body-s);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-secondary);
+}
