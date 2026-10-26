@@ -1,5 +1,5 @@
 # Builds the static site and publishes it on GitHub Pages
-# (https://qdobbela.github.io/wiskunde-in-de-stad/). All server logic runs in
+# (https://qdobbela.github.io/Wiskunde-In-De-Stad---SLC/). All server logic runs in
 # Supabase, so only public values are needed here (repository variables).
 name: Deploy to GitHub Pages
 

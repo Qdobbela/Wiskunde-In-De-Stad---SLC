@@ -56,7 +56,7 @@ Overview of what's done and what's left. Follows the build order in [docs/build-
 - [x] PWA manifest and icon
 - [x] Static site on GitHub Pages; server logic in Supabase (Edge Function + RLS)
 - [x] Tests: unit (`npm test`), API (`npm run e2e:api`), browser (`npm run e2e:teacher`, `npm run e2e:walk`)
-- [ ] Supabase → Authentication → URL Configuration: add `https://qdobbela.github.io/wiskunde-in-de-stad/**` to Redirect URLs (needed for the Microsoft login on the live site)
+- [ ] Supabase → Authentication → URL Configuration: add `https://qdobbela.github.io/Wiskunde-In-De-Stad---SLC/**` to Redirect URLs (needed for the Microsoft login on the live site)
 - [ ] Test on real phones (iPhone and Android): GPS accuracy, compass, camera, screen staying on
 - [ ] Dry run on a real route in Ghent
 

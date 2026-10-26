@@ -2,7 +2,7 @@
 
 A maths walk through Ghent for 13-year-olds. Groups walk to real places on one phone per group; a question only unlocks when the group is physically there. Teachers build tours, follow every group on a live map and review photo answers. The UI is in Dutch.
 
-**Live:** https://qdobbela.github.io/wiskunde-in-de-stad/ (teachers: `/leerkracht/`, Microsoft login)
+**Live:** https://qdobbela.github.io/Wiskunde-In-De-Stad---SLC/ (teachers: `/leerkracht/`, Microsoft login)
 
 ## How it works
 
