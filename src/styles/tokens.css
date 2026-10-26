@@ -20,6 +20,7 @@
   /* Status */
   --color-status-warning: #ff8a1f;
   --color-status-alert: #e8261c;
+  --color-status-alert-subtle: #fdd9d6;
   --color-status-locked: #ffffff;
   --color-status-here: #ff3ea5;
   --color-status-done: #c6f432;

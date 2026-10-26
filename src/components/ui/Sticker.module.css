@@ -1,4 +1,6 @@
-.sticker {
+/* :where() keeps these at zero specificity, so a page's className always wins. */
+
+:where(.sticker) {
   display: inline-flex;
   align-self: flex-start;
   padding: var(--spacing-xs) var(--spacing-sm);
@@ -12,7 +14,7 @@
   white-space: nowrap;
 }
 
-.lime {
+:where(.lime) {
   background: var(--color-action-secondary);
   color: var(--color-text-primary);
   border: var(--border-width) solid var(--color-border-default);
@@ -20,7 +22,7 @@
 }
 
 /* Map tip: "Klik op de kaart om een spot te prikken" */
-.dark {
+:where(.dark) {
   background: var(--color-bg-inverse);
   color: var(--color-text-inverse);
   font-size: var(--text-label-s);

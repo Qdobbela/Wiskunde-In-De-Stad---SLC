@@ -28,6 +28,7 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
       "public/maplibre/**",
+      "supabase/functions/**",
       ".e2e/**",
     ],
   },

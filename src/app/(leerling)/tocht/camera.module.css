@@ -1,0 +1,131 @@
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 480px;
+  height: 100dvh;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-lg) 44px;
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+}
+
+.screen :global(span) {
+  color: inherit;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cancel {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-inverse);
+  cursor: pointer;
+}
+
+.live {
+  padding: var(--spacing-2xs) var(--spacing-xs);
+  background: var(--color-status-alert);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.label {
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-action-secondary);
+}
+
+.prompt {
+  font-size: var(--text-body-l);
+  line-height: 1.4;
+}
+
+.viewfinder {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  /* Dark grey from the design, mixed from the tokens. */
+  background: color-mix(in srgb, var(--color-bg-inverse) 82%, var(--color-text-inverse));
+  border-radius: var(--radius-md);
+}
+
+.video,
+.frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video {
+  object-fit: cover;
+}
+
+.frame {
+  pointer-events: none;
+}
+
+.error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--spacing-xl);
+  font-weight: 700;
+  text-align: center;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.noGallery {
+  display: flex;
+  flex-direction: column;
+  width: 80px;
+  font-size: var(--text-body-s);
+  color: var(--color-text-disabled) !important;
+}
+
+.noGalleryTitle {
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.shutter {
+  width: 72px;
+  height: 72px;
+  background: var(--color-action-primary);
+  border: 6px solid var(--color-bg-surface);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+}
+
+.shutter:disabled {
+  opacity: 0.5;
+}
+
+.balance {
+  width: 80px;
+}

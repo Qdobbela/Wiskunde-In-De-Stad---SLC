@@ -1,0 +1,63 @@
+.controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-lg);
+}
+
+.reroll {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.phones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 320px);
+  gap: var(--spacing-xl);
+}
+
+/* Same mini phone as the T03 preview */
+.phone {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-height: 460px;
+  padding: var(--spacing-lg) var(--spacing-md);
+  background: var(--color-bg-screen);
+  border: 8px solid var(--color-border-default);
+  border-radius: 36px;
+}
+
+.spotName {
+  font-family: var(--font-display);
+  font-size: var(--text-display-m);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard-s);
+  font-size: var(--text-body-m);
+}
+
+.photo,
+.points {
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}
+
+.missing {
+  color: var(--color-text-alert);
+}

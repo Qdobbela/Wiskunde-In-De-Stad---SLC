@@ -1,0 +1,93 @@
+/* Student screens L01 to L10 (designed at 390 × 844). */
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: 480px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-lg) 28px;
+}
+
+.statusBar {
+  display: flex;
+  justify-content: space-between;
+  min-height: 18px;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+}
+
+.gps {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.gpsBad {
+  color: var(--color-text-alert);
+}
+
+.step {
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.title {
+  font-size: var(--text-display-l);
+}
+
+.spacer {
+  flex: 1;
+}
+
+/* White card with the big hard shadow */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard);
+}
+
+.cardLabel {
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.body {
+  font-size: var(--text-body-m);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.error {
+  font-weight: 700;
+  font-size: var(--text-body-s);
+  color: var(--color-text-alert);
+}
+
+.back {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}

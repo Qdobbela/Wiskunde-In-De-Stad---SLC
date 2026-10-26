@@ -44,3 +44,4 @@ next-env.d.ts
 # copied from node_modules by scripts/copy-maplibre-worker.mjs
 /public/maplibre/
 /.e2e/
+/supabase/functions/_shared/

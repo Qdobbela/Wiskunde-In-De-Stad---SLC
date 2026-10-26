@@ -1,0 +1,111 @@
+.correct {
+  background: var(--color-action-secondary);
+}
+
+.wrong {
+  background: var(--color-bg-screen);
+}
+
+.pending {
+  background: var(--color-status-pending);
+}
+
+.statusSpace {
+  min-height: 18px;
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-top: 40px;
+  text-align: center;
+}
+
+/* The big pink "Juist!" sticker */
+.sticker {
+  align-self: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-action-primary);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-display-xl);
+  line-height: 1.1;
+}
+
+.wrong .sticker {
+  background: var(--color-bg-surface);
+}
+
+.pending .sticker {
+  background: var(--color-action-secondary);
+}
+
+.points {
+  font-family: var(--font-display);
+  font-size: var(--text-display-l);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.praise {
+  font-size: var(--text-body-l);
+  line-height: 1.4;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.answer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.tile {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-end;
+  width: 96px;
+  height: 96px;
+  padding: var(--spacing-xs);
+  background: var(--color-bg-sunken);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.tileTag {
+  padding: var(--spacing-2xs) var(--spacing-xs);
+  background: var(--color-bg-inverse);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-inverse);
+}
+
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2xs);
+  min-width: 0;
+}
+
+.value {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-display-l);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.meta {
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}

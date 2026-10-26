@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wiskunde in de stad
 
-## Getting Started
+A maths walk through Ghent for 13-year-olds. Groups walk to real places on one phone per group; a question only unlocks when the group is physically there. Teachers build tours, follow every group on a live map and review photo answers. The UI is in Dutch.
 
-First, run the development server:
+**Live:** https://qdobbela.github.io/wiskunde-in-de-stad/ (teachers: `/leerkracht/`, Microsoft login)
+
+## How it works
+
+- **Frontend:** Next.js (static export) on GitHub Pages. Every page runs in the browser.
+- **Backend:** Supabase.
+  - Teachers sign in with Microsoft and work directly on Postgres, protected by row-level security.
+  - Students have no accounts: their phones only talk to the `leerling` Edge Function ([supabase/functions/leerling](supabase/functions/leerling/index.ts)), which unlocks spots, grades answers and stores photos.
+- **Anti-cheat** (server-side, [src/lib/unlock.ts](src/lib/unlock.ts)):
+  - A spot unlocks after ≥ 30 s inside the zone, with ≥ 3 pings at ≤ 30 m accuracy.
+  - GPS jumps and fake locations are flagged and lock the next spot until the teacher decides.
+  - Each group gets its own numbers, and question text is only sent after unlocking.
+  - Answers are insert-only (database trigger).
+  - Photos come from the live camera only, and only inside the zone.
+
+Design brief: [docs/build-brief.md](docs/build-brief.md). Progress: [TODO.md](TODO.md).
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local      # Supabase URL + keys
+npm run dev                     # http://localhost:3000
+npm test                        # unit tests
+npm run build && npm run serve  # static build on http://localhost:3123
+npm run e2e:api && npm run e2e:teacher && npm run e2e:walk   # against the real project
+npx supabase db push --linked   # migrations
+npm run functions:deploy        # Edge Function
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

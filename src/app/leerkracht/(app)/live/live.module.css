@@ -1,0 +1,186 @@
+.messageButton {
+  width: 300px;
+}
+
+.closeButton {
+  width: 220px;
+}
+
+.message {
+  gap: var(--spacing-sm);
+}
+
+.messageInput {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-body-l);
+  resize: vertical;
+}
+
+.messageInput:focus {
+  background: var(--color-status-pending);
+  box-shadow: var(--shadow-hard-s);
+  outline: none;
+}
+
+.messageActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.messageActions > * {
+  width: auto;
+}
+
+.notice {
+  align-self: flex-start;
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: var(--color-status-done);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+}
+
+.workspace {
+  display: flex;
+  flex: 1;
+  gap: var(--spacing-xl);
+  min-height: 640px;
+}
+
+.mapColumn {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-width: 0;
+}
+
+/* Sized with flex: MapView's own .map sets position: relative. */
+.map {
+  flex: 1;
+  min-height: 420px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: var(--spacing-md);
+  width: 440px;
+}
+
+.alert {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: var(--color-status-alert-subtle);
+  border: var(--border-width) solid var(--color-border-alert);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard-s);
+}
+
+.alertHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+}
+
+.alertTitle {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-alert);
+}
+
+.alertTime {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+}
+
+.alertText {
+  font-size: var(--text-body-s);
+  line-height: 1.4;
+}
+
+.alertActions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.groups {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.groupsTitle {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  letter-spacing: 0.04em;
+}
+
+.empty {
+  color: var(--color-text-secondary);
+}
+
+/* Groepsrij */
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+}
+
+.row:hover {
+  background: var(--color-bg-subtle);
+}
+
+.rowText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rowName {
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowMeta {
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}
+
+.sessionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  list-style: none;
+  font-weight: 700;
+}
+
+.alertActions > * {
+  flex: 1;
+  min-width: 0;
+  padding-left: var(--spacing-sm);
+  padding-right: var(--spacing-sm);
+  white-space: nowrap;
+}

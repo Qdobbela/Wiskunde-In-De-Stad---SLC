@@ -382,6 +382,35 @@ export type Database = {
           },
         ]
       }
+      session_message: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "session_message_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "session"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       teacher: {
         Row: {
           created_at: string
@@ -409,32 +438,38 @@ export type Database = {
       team: {
         Row: {
           created_at: string
+          device_id: string | null
           device_token: string
           id: string
           level: Database["public"]["Enums"]["niveau"]
           member_first_names: string[]
           name: string
           session_id: string
+          start_index: number
           started_at: string | null
         }
         Insert: {
           created_at?: string
+          device_id?: string | null
           device_token?: string
           id?: string
           level: Database["public"]["Enums"]["niveau"]
           member_first_names: string[]
           name: string
           session_id: string
+          start_index?: number
           started_at?: string | null
         }
         Update: {
           created_at?: string
+          device_id?: string | null
           device_token?: string
           id?: string
           level?: Database["public"]["Enums"]["niveau"]
           member_first_names?: string[]
           name?: string
           session_id?: string
+          start_index?: number
           started_at?: string | null
         }
         Relationships: [
@@ -535,6 +570,24 @@ export type Database = {
           },
           {
             foreignKeyName: "answer_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "team"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_last_ping: {
+        Row: {
+          accuracy_m: number | null
+          lat: number | null
+          lng: number | null
+          received_at: string | null
+          team_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ping_team_id_fkey"
             columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "team"

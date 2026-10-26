@@ -1,20 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Sticker } from "@/components/ui/Sticker";
-import { signOut } from "../login/actions";
+import { supabase } from "@/lib/supabase/client";
 import styles from "./teacher.module.css";
 
 const NAV = [
-  { href: "/leerkracht", label: "Tochten", match: (p: string) => p === "/leerkracht" || p.startsWith("/leerkracht/tochten") || p.startsWith("/leerkracht/sessies") },
-  { href: "/leerkracht/live", label: "Live", match: (p: string) => p.startsWith("/leerkracht/live") },
-  { href: "/leerkracht/vragenbank", label: "Vragenbank", match: (p: string) => p.startsWith("/leerkracht/vragenbank") },
-  { href: "/leerkracht/resultaten", label: "Resultaten", match: (p: string) => p.startsWith("/leerkracht/resultaten") },
+  { href: "/leerkracht/", label: "Tochten", match: (p: string) => /^\/leerkracht\/?$|\/leerkracht\/(tocht|vragen|start|sessie|voorbeeld)/.test(p) },
+  { href: "/leerkracht/live/", label: "Live", match: (p: string) => /\/leerkracht\/(live|groep)/.test(p) },
+  { href: "/leerkracht/vragenbank/", label: "Vragenbank", match: (p: string) => p.includes("/leerkracht/vragenbank") },
+  { href: "/leerkracht/resultaten/", label: "Resultaten", match: (p: string) => p.includes("/leerkracht/resultaten") },
 ];
 
 export function Sidebar({ name, school }: { name: string; school: string }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function signOut() {
+    await supabase().auth.signOut();
+    router.replace("/leerkracht/login/");
+  }
+
   return (
     <nav className={styles.sidebar} aria-label="Hoofdmenu">
       <div className={styles.logo}>
@@ -34,13 +41,13 @@ export function Sidebar({ name, school }: { name: string; school: string }) {
         );
       })}
       <div className={styles.spacer} />
-      <p className={styles.teacherName}>{name}</p>
-      {school && <p className={styles.school}>{school}</p>}
-      <form action={signOut}>
-        <button type="submit" className={styles.signOut}>
-          Afmelden
-        </button>
-      </form>
+      <Link href="/leerkracht/profiel/" className={styles.profile} title="Profiel aanpassen">
+        <span className={styles.teacherName}>{name}</span>
+        <span className={styles.school}>{school || "School toevoegen"}</span>
+      </Link>
+      <button type="button" className={styles.signOut} onClick={signOut}>
+        Afmelden
+      </button>
     </nav>
   );
 }

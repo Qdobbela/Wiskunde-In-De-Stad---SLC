@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Rubik, Rubik_Mono_One, Space_Mono } from "next/font/google";
+import { asset } from "@/lib/basePath";
 import "./globals.css";
 
 const rubik = Rubik({
@@ -23,6 +24,8 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Wiskunde in de stad",
   description: "Een wiskundetocht door Gent.",
+  icons: { icon: asset("/icon.svg") },
+  appleWebApp: { capable: true, title: "Wiskunde", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {

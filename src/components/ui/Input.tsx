@@ -6,6 +6,8 @@ type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
   type?: "text" | "email" | "password";
   /** Opens the numeric keyboard (with a comma key) and uses Space Mono. */
   numeric?: boolean;
+  /** Space Mono at the big size, normal keyboard (session code, group name). */
+  mono?: boolean;
   unit?: string;
   hint?: string;
   /** Shows the "Fout" state. Replaces the hint. */
@@ -16,6 +18,7 @@ export function Input({
   label,
   type = "text",
   numeric = false,
+  mono = false,
   unit,
   hint,
   error,
@@ -45,7 +48,7 @@ export function Input({
           autoComplete={type === "text" ? "off" : undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={message ? messageId : undefined}
-          className={[styles.input, numeric && styles.numeric]
+          className={[styles.input, (numeric || mono) && styles.numeric]
             .filter(Boolean)
             .join(" ")}
           {...props}

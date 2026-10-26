@@ -1,0 +1,65 @@
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-xl);
+}
+
+.sticker {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-action-primary);
+  border: var(--border-width) solid var(--color-border-default);
+  box-shadow: var(--shadow-hard-s);
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-display-l);
+  line-height: 1.1;
+}
+
+.meta {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  color: var(--color-text-secondary);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-subtle);
+  border: var(--border-width) solid transparent;
+  border-radius: var(--radius-sm);
+}
+
+.me {
+  background: var(--color-status-here);
+  border-color: var(--color-border-default);
+}
+
+.place,
+.points {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+}
+
+.name {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-body-m);
+}
+
+.me .name {
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.note {
+  font-size: var(--text-body-s);
+  text-align: center;
+  color: var(--color-text-secondary);
+}

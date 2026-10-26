@@ -1,0 +1,84 @@
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--spacing-2xs);
+}
+
+.direction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-top: var(--spacing-xl);
+  text-align: center;
+}
+
+.compass {
+  display: grid;
+  place-items: center;
+  width: 200px;
+  height: 200px;
+  padding: 0;
+  background: var(--color-action-secondary);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-hard);
+}
+
+.compassHere {
+  background: var(--color-action-primary);
+}
+
+.arrow {
+  transition: transform 300ms ease-out;
+}
+
+.compassHint {
+  margin-top: calc(-1 * var(--spacing-xs));
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}
+
+.distance {
+  font-family: var(--font-display);
+  font-size: var(--text-display-xl);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.hint {
+  font-size: var(--text-body-l);
+  line-height: 1.4;
+  color: var(--color-text-secondary);
+}
+
+.zone {
+  flex-shrink: 0;
+}
+
+.zoneHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 1.2;
+}
+
+.zoneTitle {
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.zoneTimer {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-display-l);
+  font-variant-numeric: tabular-nums;
+}
+
+.zoneText {
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}

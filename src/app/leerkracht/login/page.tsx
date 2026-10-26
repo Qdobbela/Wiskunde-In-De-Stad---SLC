@@ -1,9 +1,12 @@
+"use client";
+
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Sticker } from "@/components/ui/Sticker";
-import { signInWithMicrosoft } from "./actions";
+import { BASE_PATH } from "@/lib/basePath";
+import { supabase } from "@/lib/supabase/client";
 import styles from "./login.module.css";
-
-export const metadata = { title: "Aanmelden · Wiskunde in de stad" };
 
 const ERRORS: Record<string, string> = {
   microsoft: "Aanmelden met Microsoft lukte niet. Probeer het opnieuw.",
@@ -26,13 +29,27 @@ function MicrosoftLogo() {
   );
 }
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ fout?: string }>;
-}) {
-  const { fout } = await searchParams;
-  const error = fout ? (ERRORS[fout] ?? ERRORS.bevestigen) : undefined;
+function Login() {
+  const fout = useSearchParams().get("fout");
+  const [error, setError] = useState(fout ? (ERRORS[fout] ?? ERRORS.bevestigen) : null);
+  const [pending, setPending] = useState(false);
+
+  /** Microsoft 365 / Entra ID (Supabase "azure"); student accounts are refused by the database. */
+  async function signIn() {
+    setPending(true);
+    const { error } = await supabase().auth.signInWithOAuth({
+      provider: "azure",
+      options: {
+        // "email" is needed: Supabase identifies the account by e-mail address.
+        scopes: "email",
+        redirectTo: `${window.location.origin}${BASE_PATH}/auth/callback/`,
+      },
+    });
+    if (error) {
+      setError(ERRORS.microsoft);
+      setPending(false);
+    }
+  }
 
   return (
     <main className={styles.main}>
@@ -42,22 +59,25 @@ export default async function LoginPage({
           <span className="label">Voor leerkrachten</span>
           <h2>Aanmelden</h2>
         </div>
-
         {error && (
           <p className={styles.error} role="alert">
             {error}
           </p>
         )}
-
-        <form action={signInWithMicrosoft}>
-          <Button type="submit" variant="outline" className={styles.microsoft}>
-            <MicrosoftLogo />
-            Aanmelden met Microsoft
-          </Button>
-        </form>
-
+        <Button variant="outline" className={styles.microsoft} onClick={signIn} disabled={pending}>
+          <MicrosoftLogo />
+          Aanmelden met Microsoft
+        </Button>
         <p className={styles.note}>Gebruik je Microsoft-account van school.</p>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <Login />
+    </Suspense>
   );
 }

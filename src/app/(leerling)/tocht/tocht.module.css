@@ -1,0 +1,94 @@
+.screen {
+  height: 100dvh;
+  min-height: 0;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--spacing-2xs);
+}
+
+/* Takes the space between the top bar and the card. Sized with flex:
+   MapView's own .map class sets position: relative. */
+.map {
+  flex: 1;
+  min-height: 240px;
+}
+
+.nextCard {
+  flex-shrink: 0;
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spotName {
+  font-size: var(--text-display-m);
+  line-height: 1.15;
+}
+
+.distance {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  color: var(--color-text-secondary);
+}
+
+button.nextCard {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.spotName {
+  display: block;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+/* Message from the teacher, on top of every screen */
+.message {
+  position: fixed;
+  top: var(--spacing-md);
+  left: 50%;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: min(440px, calc(100% - 2 * var(--spacing-lg)));
+  padding: var(--spacing-md);
+  background: var(--color-bg-inverse);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard-s);
+  color: var(--color-text-inverse);
+  transform: translateX(-50%) rotate(-1deg);
+}
+
+.messageLabel {
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-action-secondary);
+}
+
+.blocked {
+  position: fixed;
+  bottom: var(--spacing-md);
+  left: 50%;
+  z-index: 9;
+  width: min(440px, calc(100% - 2 * var(--spacing-lg)));
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--color-status-alert-subtle);
+  border: var(--border-width) solid var(--color-border-alert);
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: var(--text-body-s);
+  transform: translateX(-50%);
+}

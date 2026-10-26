@@ -1,7 +1,8 @@
 import { setWorkerUrl, type LayerSpecification, type StyleSpecification } from "maplibre-gl";
+import { asset } from "@/lib/basePath";
 
 // Copied there by scripts/copy-maplibre-worker.mjs; see that file for why.
-setWorkerUrl("/maplibre/maplibre-gl-worker.mjs");
+setWorkerUrl(asset("/maplibre/maplibre-gl-worker.mjs"));
 
 /** OpenFreeMap: free OpenStreetMap vector tiles, no API key. */
 const BASE_STYLE_URL = "https://tiles.openfreemap.org/styles/positron";
