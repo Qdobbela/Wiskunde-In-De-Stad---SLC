@@ -1,0 +1,9 @@
+.form {
+  max-width: 560px;
+  gap: var(--spacing-lg);
+}
+
+.buttons {
+  display: flex;
+  gap: var(--spacing-md);
+}

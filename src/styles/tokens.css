@@ -1,0 +1,76 @@
+/*
+ * Design tokens from Figma (style direction C, "Graffitistraatje").
+ * Names match the WEB code syntax set on the Figma variables.
+ * Never hardcode these hex values in components; use the variables.
+ */
+:root {
+  /* Backgrounds */
+  --color-bg-screen: #e4e4df;
+  --color-bg-surface: #ffffff;
+  --color-bg-sunken: #dadad5;
+  --color-bg-subtle: #f1f1ee;
+  --color-bg-inverse: #0d0d0d;
+
+  /* Actions */
+  --color-action-primary: #ff3ea5;
+  --color-action-secondary: #c6f432;
+  --color-action-info: #3255f5;
+  --color-action-disabled: #dadad5;
+
+  /* Status */
+  --color-status-warning: #ff8a1f;
+  --color-status-alert: #e8261c;
+  --color-status-locked: #ffffff;
+  --color-status-here: #ff3ea5;
+  --color-status-done: #c6f432;
+  --color-status-pending: #d9e0fe;
+
+  /* Text */
+  --color-text-primary: #0d0d0d;
+  --color-text-secondary: #4a4a4a;
+  --color-text-inverse: #ffffff;
+  --color-text-disabled: #a3a39e;
+  --color-text-alert: #e8261c;
+
+  /* Borders */
+  --color-border-default: #0d0d0d;
+  --color-border-muted: #a3a39e;
+  --color-border-alert: #e8261c;
+  --border-width: 2.5px;
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-full: 999px;
+
+  /* Spacing */
+  --spacing-2xs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+
+  /* Hard shadows, never blurred */
+  --shadow-hard: 5px 5px 0 var(--color-border-default);
+  --shadow-hard-s: 3px 3px 0 var(--color-border-default);
+
+  /* Type families (set by next/font in layout.tsx) */
+  --font-display: var(--font-rubik-mono-one), system-ui, sans-serif;
+  --font-body: var(--font-rubik), system-ui, sans-serif;
+  --font-numeric: var(--font-space-mono), ui-monospace, monospace;
+
+  /* Type sizes */
+  --text-display-xl: 40px;
+  --text-display-l: 28px;
+  --text-display-m: 20px;
+  --text-button: 18px;
+  --text-body-l: 18px;
+  --text-body-m: 16px;
+  --text-body-s: 13px;
+  --text-label-m: 15px;
+  --text-label-s: 12px;
+}

@@ -1,0 +1,47 @@
+.pin {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-hard-s);
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  color: var(--color-text-primary);
+}
+
+/* Small version in lists (T02 spot list) */
+.small {
+  width: 36px;
+  height: 36px;
+  border-width: 1.875px;
+  box-shadow: 2.25px 2.25px 0 var(--color-border-default);
+  font-size: 11.25px;
+}
+
+.vergrendeld {
+  background: var(--color-status-locked);
+  color: var(--color-text-secondary);
+}
+
+.hier {
+  background: var(--color-status-here);
+}
+
+.opgelost {
+  background: var(--color-status-done);
+}
+
+.groep {
+  background: var(--color-action-info);
+  color: var(--color-text-inverse);
+}
+
+.draggable {
+  cursor: grab;
+}

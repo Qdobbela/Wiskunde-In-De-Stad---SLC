@@ -1,0 +1,62 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+.codePanel {
+  align-items: flex-start;
+}
+
+.code {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-action-secondary);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hard);
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: 0.12em;
+  transform: rotate(-2deg);
+}
+
+.instructions {
+  margin-top: var(--spacing-md);
+  font-size: var(--text-body-l);
+}
+
+.empty {
+  color: var(--color-text-secondary);
+}
+
+.teams {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  list-style: none;
+}
+
+.team {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.teamName {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.members {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-body-s);
+  color: var(--color-text-secondary);
+}

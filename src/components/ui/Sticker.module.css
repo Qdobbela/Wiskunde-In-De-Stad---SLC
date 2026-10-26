@@ -1,0 +1,28 @@
+.sticker {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lime {
+  background: var(--color-action-secondary);
+  color: var(--color-text-primary);
+  border: var(--border-width) solid var(--color-border-default);
+  box-shadow: var(--shadow-hard-s);
+}
+
+/* Map tip: "Klik op de kaart om een spot te prikken" */
+.dark {
+  background: var(--color-bg-inverse);
+  color: var(--color-text-inverse);
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+}

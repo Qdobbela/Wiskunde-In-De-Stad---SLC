@@ -1,0 +1,39 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-hard-s);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+  text-decoration: none;
+}
+
+.vergrendeld {
+  background: var(--color-status-locked);
+}
+
+.hier {
+  background: var(--color-status-here);
+}
+
+.opgelost {
+  background: var(--color-status-done);
+}
+
+.wacht {
+  background: var(--color-status-pending);
+}
+
+.verdacht {
+  background: var(--color-status-alert);
+  color: var(--color-text-inverse);
+}

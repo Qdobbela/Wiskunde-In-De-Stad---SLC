@@ -1,0 +1,97 @@
+.newTour {
+  width: 280px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-xl);
+  align-items: start;
+}
+
+.card {
+  min-width: 0;
+}
+
+.mapLink {
+  display: block;
+}
+
+.miniMap {
+  height: 150px;
+}
+
+.cardTitle {
+  font-size: var(--text-display-m);
+  line-height: 1.15;
+}
+
+.cardTitle a {
+  text-decoration: none;
+}
+
+.counts {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  color: var(--color-text-secondary);
+}
+
+.note {
+  font-size: var(--text-body-m);
+  color: var(--color-text-secondary);
+}
+
+.cardActions {
+  padding-top: var(--spacing-xs);
+}
+
+.empty {
+  align-items: flex-start;
+}
+
+.sessions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  list-style: none;
+}
+
+.sessionRow {
+  display: grid;
+  grid-template-columns: 120px 220px minmax(0, 320px) 200px 1fr;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--color-bg-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.sessionDate,
+.sessionPoints {
+  font-family: var(--font-numeric);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+}
+
+.sessionClass {
+  font-size: var(--text-body-m);
+}
+
+.sessionTour {
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sessionLink {
+  justify-self: end;
+  font-weight: 700;
+  font-size: var(--text-label-s);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}

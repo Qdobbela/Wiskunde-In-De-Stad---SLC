@@ -1,0 +1,30 @@
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.pill {
+  padding: var(--spacing-xs) var(--spacing-md);
+  background: var(--color-bg-surface);
+  border: var(--border-width) solid var(--color-border-muted);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.pill:hover {
+  border-color: var(--color-border-default);
+}
+
+.active {
+  background: var(--color-status-pending);
+  border-color: var(--color-border-default);
+  box-shadow: var(--shadow-hard-s);
+  color: var(--color-text-primary);
+}

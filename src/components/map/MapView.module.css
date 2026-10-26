@@ -1,0 +1,21 @@
+.map {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-sunken);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-secondary);
+  font-weight: 700;
+}

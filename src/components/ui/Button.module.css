@@ -1,0 +1,65 @@
+/*
+ * Every selector is wrapped in :where() (zero specificity), so a className
+ * passed by a page (width, colour…) always wins, whatever order the CSS
+ * modules end up in after a build.
+ */
+
+:where(.button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  width: 100%;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border: var(--border-width) solid var(--color-border-default);
+  border-radius: var(--radius-md);
+  font-family: var(--font-display);
+  font-size: var(--text-button);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: transform 80ms ease-out, box-shadow 80ms ease-out;
+}
+
+:where(.primary) {
+  background: var(--color-action-primary);
+  box-shadow: var(--shadow-hard);
+}
+
+:where(.secondary) {
+  background: var(--color-action-secondary);
+  box-shadow: var(--shadow-hard);
+}
+
+/* Outline is the less important action: label style, small shadow */
+:where(.outline) {
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-hard-s);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--text-label-m);
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+}
+
+/* Pressing pushes the button into its shadow */
+:where(.primary:active:not(:disabled), .secondary:active:not(:disabled)) {
+  transform: translate(5px, 5px);
+  box-shadow: none;
+}
+
+:where(.outline:active:not(:disabled)) {
+  transform: translate(3px, 3px);
+  box-shadow: none;
+}
+
+:where(.button:disabled, .button[aria-disabled="true"]) {
+  background: var(--color-action-disabled);
+  border-color: var(--color-border-muted);
+  color: var(--color-text-disabled);
+  box-shadow: none;
+  cursor: not-allowed;
+}
